@@ -19,7 +19,6 @@
     "puppeteer": "^24.11.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
-    "2captcha-puppeteer-extra-plugin": "^1.0.0",
     "2captcha-ts": "^1.0.0"
   },
   "devDependencies": {
