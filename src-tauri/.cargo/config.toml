@@ -1,0 +1,21 @@
+[build]
+# Enable parallel compilation
+jobs = 16  # My CPU Cores
+
+[target.x86_64-pc-windows-msvc]
+# Use MSVC linker for faster linking on Windows
+linker = "rust-lld"
+
+[net]
+# Use multiple Git sources for faster dependency downloads
+git-fetch-with-cli = true
+
+[profile.dev]
+# Enable incremental compilation
+incremental = true
+# Use more codegen units for parallel compilation
+codegen-units = 256
+# Optimize a bit even in debug mode
+opt-level = 1
+# Disable debug info for faster compilation
+debug = false 
