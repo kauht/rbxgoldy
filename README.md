@@ -56,4 +56,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 **Made with ❤️ by [@kauht](https://discord.gg/WVMHUgrgeH)**
+
 **For any questions join the discord^^**
