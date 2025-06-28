@@ -16,7 +16,7 @@ A lightweight Tauri desktop app to automatically join **rains** on the RBXGOLD g
 
 ### Requirements
 - **Tauri** (Rust, Node.js, and a frontend framework like React)
-- **Puppeteer or Playwright** for browser automation (JS/TS)
+- **Puppeteer** for browser automation
 
 ### Installation
 1. Install [Rust](https://www.rust-lang.org/tools/install) and [Node.js](https://nodejs.org/)
@@ -32,7 +32,7 @@ A lightweight Tauri desktop app to automatically join **rains** on the RBXGOLD g
 
 ## 🚀 To-Do
 
-- [ ] Captcha solver integration
+- [ ] Captcha solver integration (hCaptcha)
 - [ ] Login support (cookieand password-based auth)
 - [ ] Auto-join rains (detect notifications, click join button, add random delays)
 - [ ] Auto-wagering system (detect winnings, calculate requirements, place bets)

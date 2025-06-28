@@ -16,7 +16,11 @@
   "dependencies": {
     "@tauri-apps/api": "^2.6.0",
     "@tauri-apps/plugin-opener": "^2.4.0",
-    "puppeteer": "^24.11.0"
+    "puppeteer": "^24.11.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "2captcha-puppeteer-extra-plugin": "^1.0.0",
+    "2captcha-ts": "^1.0.0"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.8",
