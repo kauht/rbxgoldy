@@ -18,8 +18,8 @@
     "@tauri-apps/plugin-opener": "^2.4.0",
     "puppeteer": "^24.11.0",
     "puppeteer-extra": "^3.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2",
-    "2captcha-ts": "^1.0.0"
+    "puppeteer-extra-plugin-recaptcha": "^3.6.8",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.8",
