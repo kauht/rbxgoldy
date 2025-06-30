@@ -25,3 +25,11 @@ export async function login(username: string, password: string, page: Page) {
     
     await captcha(page);
   }
+export async function gamble(amount: Number, page: Page) {
+  const dice = await page.waitForSelector("xpath///html/body/div[1]/div[1]/div[2]/a[8]", { timeout: 10000 });
+  console.log("Found dice button.");
+  await dice?.click();
+  console.log("Starting to gamble");
+
+  // after allat change gamble amount to amount set in function parameters, then click gamble, then do "await page.goto("https://rbxgold.com");"
+}
