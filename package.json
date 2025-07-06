@@ -16,6 +16,8 @@
   "dependencies": {
     "@tauri-apps/api": "^2.6.0",
     "@tauri-apps/plugin-opener": "^2.4.0",
+    "dayjs": "^1.11.13",
+    "node-fetch": "^2.7.0",
     "puppeteer": "^24.11.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-recaptcha": "^3.6.8",

@@ -30,9 +30,7 @@ puppeteer.use(
   })
 );
 
-const cookies: Array<string> = [];
 
-const users: Array<[string, string]> = [];
 
   export async function cookielogin(cookie: string, page: Page, browser: Browser) {
     await page.setCookie({
@@ -45,49 +43,45 @@ const users: Array<[string, string]> = [];
       sameSite: 'None'
   });
   
-  log("Cookie set, refreshing page...");
+  log("[ ! ] Cookie set, refreshing page...");
   //await page.reload();
   }
 
   
   export async function gamble(amount: number, page: Page) {
     await page.goto("https://rbxgold.com/roll");
-    log("Starting to gamble");
+    log("[ ! ] Starting to gamble");
     
     const chance = await page.waitForSelector('xpath///html/body/div[1]/div[3]/div/main/div/div[2]/div/div[1]/div/div[2]/div[3]/div[3]/div/div[1]/input', { timeout: 10000 });
     chance?.type("93");
-    log("Set Win Chance to 93");
+    log("[ ! ] Set Win Chance to 93");
 
     const price = await page.waitForSelector('xpath///html/body/div[1]/div[3]/div/main/div/div[2]/div/div[1]/div/div[1]/div[2]/div/div[1]/input', { timeout: 10000 });
-    if (amount >= 50) {
-      let remainder = amount % 10;
-      amount = Math.floor(amount / 10);
+    let remainder = amount % 10;
+    amount = Math.floor(amount / 10);
 
-      log("Gambling " + amount + " 10x, then gambling " + remainder);
-      await price?.type(amount.toString());
-      const play = await page.waitForSelector('xpath///html/body/div[1]/div[3]/div/main/div/div[2]/div/div/div/div[1]/div[3]/button', { timeout: 10000 });
-      
-      for (let i = 0; i < 10; i++) {
-        await play?.click();
-        const accept = await page.waitForSelector('xpath///html/body/div[1]/div[5]/div[2]/div/div/div[3]/button[1]', {timeout: 1000});
-        await accept?.click();
-        await sleep(RNG(2000, 3000));
-      }
-      if (remainder) {
-        await price?.type(remainder.toString());
-        await play?.click();
-        const accept = await page.waitForSelector('xpath///html/body/div[1]/div[5]/div[2]/div/div/div[3]/button[1]', {timeout: 1000});
-        await accept?.click();
-      }
-      await page.goto("https://rbxgold.com/roll");
-      return;
-    }
+    log("Gambling " + amount + " 10x, then gambling " + remainder);
+    await price?.evaluate(el => (el as HTMLInputElement).value = '');
     await price?.type(amount.toString());
-
     const play = await page.waitForSelector('xpath///html/body/div[1]/div[3]/div/main/div/div[2]/div/div/div/div[1]/div[3]/button', { timeout: 10000 });
-    await play?.click();
-
-    await page.goto("https://rbxgold.com/roll");
+    
+    for (let i = 0; i < 10; i++) {
+      await play?.click();
+      const accept = await page.waitForSelector('xpath///html/body/div[1]/div[5]/div[2]/div/div/div[3]/button[1]', {timeout: 1000});
+      await accept?.click();
+      await sleep(RNG(2000, 3000));
+      log("[ ! ] Gambled " + amount);
+    }
+    if (remainder) {
+      await sleep(RNG(2000, 3000));
+      await price?.evaluate(el => (el as HTMLInputElement).value = '');
+      await price?.type(remainder.toString());
+      await play?.click();
+      const accept = await page.waitForSelector('xpath///html/body/div[1]/div[5]/div[2]/div/div/div[3]/button[1]', {timeout: 1000});
+      await accept?.click();
+      log("[ ! ] Gambled " + remainder);
+    }
+    await page.goto("https://rbxgold.com/");
     return;
   }
   
@@ -136,17 +130,24 @@ const users: Array<[string, string]> = [];
     }
   }
 
-  async function waitForAlert(target: RegExp | string, timeout = 600000): Promise<string | null> {
+  async function waitForAlert(target: RegExp | string, browser: Browser, timeout = 600000): Promise<string | null> {
     const start = Date.now();
     let lastSeen = recent_alert;
     while (Date.now() - start < timeout) {
       if (recent_alert !== lastSeen && recent_alert) {
+        const alertText = recent_alert.trim();
+        log("[ALERT] ", alertText);
+        
+        if (alertText.includes("You are not eligible to join the rain.")) {
+          log("[!] Account ineligible. Closing browser for this account.");
+          await browser.close();
+          return null;
+        }
         if (
-          (typeof target === 'string' && recent_alert.includes(target)) ||
-          (target instanceof RegExp && target.test(recent_alert))
+          (typeof target === 'string' && alertText.includes(target)) ||
+          (target instanceof RegExp && target.test(alertText))
         ) {
-          log("[ALERT] ", recent_alert);
-          return recent_alert;
+          return alertText;
         }
         lastSeen = recent_alert;
       }
@@ -167,33 +168,35 @@ const users: Array<[string, string]> = [];
     }
   }
 
-  export async function rain(page: Page) {
+  export async function rain(page: Page, browser: Browser) {
     stopWatching = false;
-    log("Waiting for rain to start...");
+    log("[ ! ] Waiting for rain to start...");
 
     void watchAlerts(page);
 
     const joinSelector = "xpath///html/body/div[1]/div[4]/div/div/div[2]/div/div[1]/div/div/div/div[2]/button";
     await page.waitForSelector(joinSelector, { timeout: 0 });
-    log("[!] Rain started, joining...");
+    log("[ ! ] Rain started, joining...");
     await page.click(joinSelector);
     
-    log("[!] Solving captcha...");
+    log("[ ! ] Solving captcha...");
     let solved = await captchaTimeout(page, 60000);
     if (!solved) {
-      log("[!] Could not solve Captcha in 60s, retrying...");
+      log("[ ! ] Could not solve Captcha in 60s, retrying...");
       solved = await captchaTimeout(page, 60000);
       if (!solved) {
-        log("[!] Captcha not solved after two attempts. Giving up.");
+        log("[ ! ] Captcha not solved after two attempts. Giving up.");
         last_rain = 0;
         stopWatching = true;
         return;
       }
     }
-    log("[!] Captcha solved.");
-    const joinedText = await waitForAlert("Successfully joined rain!");
-    log("[!] Waiting for rain to finish...");
-    const wonText = await waitForAlert(/You won \d+ tokens from rain!/);
+    log("[ ! ] Captcha solved.");
+    const joinedText = await waitForAlert("Successfully joined rain!", browser);
+    if (!joinedText) return;
+    log("[ ! ] Waiting for rain to finish...");
+    const wonText = await waitForAlert(/You won \d+ tokens from rain!/, browser);
+    if (!wonText) return;
     // Extract number won from the message
     let match: RegExpMatchArray | null = null;
     if (typeof wonText === 'string') {
@@ -202,8 +205,8 @@ const users: Array<[string, string]> = [];
     }
     if (match) {
       last_rain = parseInt(match[1], 10); // Convert the extracted string to a base-10 number
-      log(`[!] Set last_rain to ${last_rain}`);
-      log(`[!] last_rain is now ${last_rain}`);
+      log(`[ ! ] Set last_rain to ${last_rain}`);
+      log(`[ ! ] last_rain is now ${last_rain}`);
     } else {
       log("[?] What the fuck...");
     }
@@ -212,34 +215,25 @@ const users: Array<[string, string]> = [];
 
   export async function login(username: string, password: string, page: Page) {
     const startLogin = await page.waitForSelector('xpath///*[@id="app-body"]/div/header/div/div[2]/div/div[1]/button[1]', { timeout: 10000 });
-    log("[!] Starting login process.");
+    log("[ ! ] Starting login process.");
   
     await startLogin?.click();
   
     const userbox = await page.waitForSelector("xpath///html/body/div[1]/div[5]/div[2]/div/div/div[1]/div/div/div[2]/div[1]/div[1]/input", { timeout: 10000 });
-    log("[!] Found username input.");
+    log("[ ! ] Found username input.");
     const passbox = await page.waitForSelector("xpath///html/body/div[1]/div[5]/div[2]/div/div/div[1]/div/div/div[2]/div[1]/div[2]/input", { timeout: 10000 });
-    log("[!] Found password input.");
+    log("[ ! ] Found password input.");
     const loginButton = await page.waitForSelector("xpath///html/body/div[1]/div[5]/div[2]/div/div/div[1]/div/div/div[2]/div[2]/button", { timeout: 10000 });
-    log("[!] Logged in, starting captcha solver..");
+    log("[ ! ] Logged in, starting captcha solver..");
   
     await userbox?.type(username);
-    log("[!] Typed username.");
+    log("[ ! ] Typed username.");
     await passbox?.type(password);
-    log("[!] Typed password.");
+    log("[ ! ] Typed password.");
     await loginButton?.click();
-    log("[!] Logging in.");
+    log("[ ! ] Logging in.");
     
     await captcha(page);
-  }
-
-
-  export function add_cookie(cookie: string) {
-    cookies.push(cookie);
-  }
-
-  export function add_user(username: string, password: string) {
-    users.push([username, password]);
   }
 
   export async function begin(cookie: string) {
@@ -254,7 +248,7 @@ const users: Array<[string, string]> = [];
 
       
       while (1) {
-        await rain(page);
+        await rain(page, browser);
         //set_last_rain_transaction(page);
         await gamble(last_rain, page);
       }
@@ -265,10 +259,10 @@ const users: Array<[string, string]> = [];
       // await login(USER, PASS, page);
       if (browser && browser.connected) {
         await browser.close();
-        log("[!] Automation Ended");
+        log("[ ! ] Automation Ended");
       }
     } catch (err) {
-      log("[!] Failed to launch:", err);
+      log("[ ! ] Failed to launch:", err);
       return;
     }
   }

@@ -1,20 +1,32 @@
-import { begin, add_cookie, add_user } from "./browser.ts";
+import { begin } from "./browser.ts";
 import { sleep, RNG } from "./helper.ts";
 // TEMP CONSTANTS
 // REMOVE THESE LATER FOR MULTI-ACCOUNT SUPPORT
 const USER = "kauht";
 const PASS = "S@muel1212!Kaughts";
 
-const COOKIE = "RbHD56FcsA9w2EVpsxACx~CuGznxdrx57xGPXBsa8iF";
+const cookies: Array<string> = [];
+
+const users: Array<[string, string]> = [];
+
+export function add_cookie(cookie: string) {
+  cookies.push(cookie);
+}
+
+export function add_user(username: string, password: string) {
+  users.push([username, password]);
+}
+
 
 export async function main() {
 
-  add_cookie(COOKIE);
-  add_cookie("pfOHQhwc-5CStpkp9PGhG~RCH2M9W_G9gG-R5lo1A_b");
+  add_cookie("RbHD56FcsA9w2EVpsxACx~CuGznxdrx57xGPXBsa8iF");
+  //add_cookie("sQW2WXNf8OZrFh22Qfbxp~sOVj6htWTcV8mtlViBIzD");
   
   add_user(USER, PASS);
-
-  await begin(COOKIE);
+  for (const cookie of cookies) {
+    void begin(cookie);
+  }
 
   await sleep(200000);
 }
