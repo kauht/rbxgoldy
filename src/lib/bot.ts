@@ -5,7 +5,7 @@ import { sleep, RNG } from "./helper.ts";
 const USER = "kauht";
 const PASS = "S@muel1212!Kaughts";
 
-const COOKIE = "RbHD56FcsA9w2EVpsxACx~wb6SuLNiq4P8zRv0m_iSh";
+const COOKIE = "RbHD56FcsA9w2EVpsxACx~CuGznxdrx57xGPXBsa8iF";
 
 export async function main() {
 
@@ -19,4 +19,4 @@ export async function main() {
   await sleep(200000);
 }
 
-main(); 
+main();

@@ -34,17 +34,13 @@ A lightweight Tauri desktop app to automatically join **rains** on the RBXGOLD g
 
 - [x] Captcha solver integration (hCaptcha)
 - [x] Auto-login
-- [ ] Random Number Generator
-- [ ] Auto-join rains (detect notifications, click join button, add random delays)
-- [ ] Auto-wagering system (detect winnings, calculate requirements, place bets)
-- [ ] Multiple account support (account switching, credentials management, parallel automation)
-- [ ] Auto-claim daily chests (detect availability, auto-click, track history)
-- [ ] Stats tracking (rains joined, winnings/losses, wager completion rates, export data)
+- [x] Random Number Generator
+- [x] Auto-join rains
+- [x] Auto-gamble
+- [x] Multiple account support
+- [ ] Auto-claim daily chests
+- [ ] Stats tracking
 - [ ] Basic control panel GUI (start/stop buttons, real-time logs, basic stats display)
-- [ ] Advanced dashboard GUI (detailed charts, account management, settings panel)
-- [ ] User settings & configuration (timing settings, risk management, notifications)
-- [ ] Auto-gambling system (betting strategies, risk management, profit tracking)
-- [ ] Rain frequency detection (learn patterns, optimize timing, predictive analytics)
 
 ## 🤝 Contributing
 
